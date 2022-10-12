@@ -9,6 +9,6 @@ edition = "2021"
 anyhow = "1.0.65"
 clap = { version = "4.0.14", features = ["derive"] }
 maplit = "1.0.2"
-ramhorns = {version = "0.14.0", default_features = false}
 serde = { version = "1.0.145", features = ["derive"] }
+tera = "1.17.1"
 toml = "0.5.9"
