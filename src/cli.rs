@@ -32,8 +32,26 @@ impl Command {
     /// Runs the given command.
     pub(crate) fn run(self) -> anyhow::Result<()> {
         match self {
-            Self::Build => todo!(),
-            Self::Clean => todo!(),
+            Self::Build => {
+                anyhow::ensure!(
+                    path::Path::new(config::FILE_NAME).exists(),
+                    "Cannot build site: {} not found",
+                    config::FILE_NAME
+                );
+
+                todo!()
+            }
+            Self::Clean => {
+                anyhow::ensure!(
+                    path::Path::new(config::FILE_NAME).exists(),
+                    "Cannot clean site: {} not found",
+                    config::FILE_NAME
+                );
+
+                fs::remove_dir_all("out").context("No build output to clean")?;
+
+                todo!()
+            }
             Self::Init => config::generate_config_file(&path::Path::new(".")),
             Self::New { name } => {
                 fs::create_dir(&name).with_context(|| {
