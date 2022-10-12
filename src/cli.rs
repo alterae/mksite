@@ -39,6 +39,7 @@ impl Command {
                 fs::create_dir(&name).with_context(|| {
                     format!("Cannot create directory {name} as it already exists")
                 })?;
+                fs::create_dir(path::Path::new(&name).join("src"))?;
                 config::generate_config_file(&path::Path::new(&name))
             }
         }
