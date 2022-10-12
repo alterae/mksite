@@ -1,0 +1,6 @@
+[metadata]
+name = "world"
+software = { name = "mksite", version = "0.1.0" }
+
+[processors]
+md.html = "pandoc -f markdown -t html"
