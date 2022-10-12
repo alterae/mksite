@@ -16,6 +16,11 @@ pub(crate) enum Processor {
     Chain(Vec<String>),
 }
 
+/// Returns true if the `mksite.toml` config file exists in the current directory.
+pub fn exists() -> bool {
+    path::Path::new(FILE_NAME).exists()
+}
+
 /// Generates the `mksite.toml` config file in the specified directory.
 /// `path` must be a directory.
 pub(crate) fn generate_config_file(path: &impl AsRef<path::Path>) -> anyhow::Result<()> {

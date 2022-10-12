@@ -34,7 +34,7 @@ impl Command {
         match self {
             Self::Build => {
                 anyhow::ensure!(
-                    path::Path::new(config::FILE_NAME).exists(),
+                    config::exists(),
                     "Cannot build site: {} not found",
                     config::FILE_NAME
                 );
@@ -43,14 +43,12 @@ impl Command {
             }
             Self::Clean => {
                 anyhow::ensure!(
-                    path::Path::new(config::FILE_NAME).exists(),
+                    config::exists(),
                     "Cannot clean site: {} not found",
                     config::FILE_NAME
                 );
 
-                fs::remove_dir_all("out").context("No build output to clean")?;
-
-                todo!()
+                fs::remove_dir_all("out").context("No build output to clean")
             }
             Self::Init => config::generate_config_file(&path::Path::new(".")),
             Self::New { name } => {
