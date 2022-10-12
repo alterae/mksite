@@ -1,6 +1,7 @@
-use std::{fs, path};
+use std::{fs, path::Path};
 
 use anyhow::Context;
+use tera::Tera;
 
 use crate::config;
 
@@ -39,7 +40,27 @@ impl Command {
                     config::FILE_NAME
                 );
 
-                todo!()
+                let config = config::load()?;
+
+                let context = tera::Context::from_serialize(config.metadata)?;
+
+                let tera = Tera::new("src/**/*")?;
+
+                for template in tera.get_template_names() {
+                    let output = tera.render(template, &context)?;
+
+                    let path = Path::new("out").join(template);
+
+                    if let Some(p) = path.parent() {
+                        fs::create_dir_all(p)?;
+                    }
+
+                    // TODO: process output, apply layouts
+
+                    fs::write(path, output)?;
+                }
+
+                Ok(())
             }
             Self::Clean => {
                 anyhow::ensure!(
@@ -50,13 +71,13 @@ impl Command {
 
                 fs::remove_dir_all("out").context("No build output to clean")
             }
-            Self::Init => config::generate_config_file(&path::Path::new(".")),
+            Self::Init => config::generate_config_file(&Path::new(".")),
             Self::New { name } => {
                 fs::create_dir(&name).with_context(|| {
                     format!("Cannot create directory {name} as it already exists")
                 })?;
-                fs::create_dir(path::Path::new(&name).join("src"))?;
-                config::generate_config_file(&path::Path::new(&name))
+                fs::create_dir(Path::new(&name).join("src"))?;
+                config::generate_config_file(&Path::new(&name))
             }
         }
     }
