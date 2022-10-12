@@ -1,7 +1,10 @@
 use clap::Parser;
 
 mod cli;
+mod config;
 
-fn main() {
-    let _args = cli::Args::parse();
+fn main() -> anyhow::Result<()> {
+    let args = cli::Args::parse();
+
+    args.command.run()
 }

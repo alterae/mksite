@@ -2,6 +2,7 @@
 #[derive(clap::Parser)]
 #[command(version)]
 pub(crate) struct Args {
+    /// The subcommand to run.
     #[command(subcommand)]
     pub command: Command,
 }
@@ -19,4 +20,16 @@ pub(crate) enum Command {
         /// The name of the directory to create.
         name: String,
     },
+}
+
+impl Command {
+    /// Runs the given command.
+    pub(crate) fn run(self) -> anyhow::Result<()> {
+        match self {
+            Self::Build => todo!(),
+            Self::Clean => todo!(),
+            Self::Init => todo!(),
+            Self::New { name: _ } => todo!(),
+        }
+    }
 }
