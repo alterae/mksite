@@ -1,3 +1,9 @@
+use std::{fs, path};
+
+use anyhow::Context;
+
+use crate::config;
+
 /// A format-agnostic static site generator.
 #[derive(clap::Parser)]
 #[command(version)]
@@ -28,8 +34,13 @@ impl Command {
         match self {
             Self::Build => todo!(),
             Self::Clean => todo!(),
-            Self::Init => todo!(),
-            Self::New { name: _ } => todo!(),
+            Self::Init => config::generate_config_file(&path::Path::new(".")),
+            Self::New { name } => {
+                fs::create_dir(&name).with_context(|| {
+                    format!("Cannot create directory {name} as it already exists")
+                })?;
+                config::generate_config_file(&path::Path::new(&name))
+            }
         }
     }
 }
