@@ -47,6 +47,8 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
     if Path::new(&config.dirs.r#static).exists() {
         println!("\nCopying static files...\n");
 
+        // TODO: implement this manually at some point because `fs_extra` is a
+        // poorly documented black with limited introspection capabilities.
         fs_extra::dir::copy(
             config.dirs.r#static,
             config.dirs.out,
