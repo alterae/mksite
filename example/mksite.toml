@@ -1,4 +1,9 @@
-[metadata]
+dirs.src = "src"
+dirs.out = "out"
+dirs.static = "static"
+dirs.layout = "layout"
+
+[data]
 name = "world"
 software = { name = "mksite", version = "0.1.0" }
 
