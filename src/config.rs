@@ -47,7 +47,7 @@ pub(crate) fn generate_config_file(path: &impl AsRef<path::Path>) -> anyhow::Res
 
     fs::write(
         path.as_ref().join(FILE_NAME),
-        toml::to_string(&Config::default())?,
+        include_str!("../mksite.default.toml"),
     )?;
 
     Ok(())
