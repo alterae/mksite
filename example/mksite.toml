@@ -10,4 +10,4 @@ software = { name = "mksite", version = "0.1.0" }
 [transforms]
 md.html = "pandoc -f markdown -t html"
 scd.html = ["scdoc", "pandoc -f man -t html"]
-scd.tex = ["scdoc", "pandoc -f man -t latex"]
+scd.pdf = ["scdoc", "pandoc -f man -t pdf"]

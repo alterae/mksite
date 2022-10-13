@@ -31,7 +31,7 @@ pub(crate) enum Transform {
 
 // TODO: move to own module
 impl Transform {
-    pub(crate) fn apply(&self, input: &str) -> anyhow::Result<String> {
+    pub(crate) fn apply(&self, input: &[u8]) -> anyhow::Result<Vec<u8>> {
         match self {
             Self::Single(command) => exec(input.into(), command),
             Self::Chain(commands) => commands.iter().try_fold(input.into(), exec),
@@ -40,7 +40,7 @@ impl Transform {
 }
 
 // TODO: move to own module
-pub(crate) fn exec(input: String, command: &String) -> anyhow::Result<String> {
+pub(crate) fn exec(input: Vec<u8>, command: &String) -> anyhow::Result<Vec<u8>> {
     println!("    Applying `{command}'...");
 
     let argv = shell_words::split(command)?;
@@ -51,7 +51,7 @@ pub(crate) fn exec(input: String, command: &String) -> anyhow::Result<String> {
         .stdout(Stdio::piped())
         .spawn()?;
 
-    proc.stdin.take().unwrap().write_all(input.as_bytes())?;
+    proc.stdin.take().unwrap().write_all(&input)?;
 
-    Ok(String::from_utf8(proc.wait_with_output()?.stdout)?)
+    Ok(proc.wait_with_output()?.stdout)
 }

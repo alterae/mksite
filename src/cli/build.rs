@@ -45,7 +45,7 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
                     let path = &path.with_extension(ext);
 
                     println!("Transforming {path:?}...");
-                    let output = proc.apply(output.as_str())?;
+                    let output = proc.apply(output.as_bytes())?;
 
                     println!("     Writing {path:?}...");
                     fs::write(path, output)?;
