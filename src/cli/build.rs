@@ -23,7 +23,11 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
             .to_str()
             .unwrap(),
     )?;
+
+    println!("Building templates:\n");
+
     for template in tera.get_template_names() {
+        println!("Rendering {template}...");
         let output = tera.render(template, &context)?;
 
         let path = Path::new(&config.dirs.out).join(template);
@@ -38,6 +42,8 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
             &config.dirs.layout,
             &config.processors,
         );
+
+        println!("  Writing {path:?}...");
 
         fs::write(path, output)?;
     }

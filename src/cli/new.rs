@@ -13,6 +13,8 @@ pub(crate) fn cmd(name: String) -> anyhow::Result<()> {
     fs::create_dir(&name)
         .with_context(|| format!("Cannot create directory {name} as it already exists"))?;
 
+    println!("Creating new project scaffold in {name}...");
+
     fs::create_dir(Path::new(&name).join("src"))?;
     fs::create_dir(Path::new(&name).join("static"))?;
     fs::create_dir(Path::new(&name).join("layout"))?;

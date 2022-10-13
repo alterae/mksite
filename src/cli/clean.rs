@@ -14,5 +14,9 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
         config::FILE_NAME
     );
 
-    fs::remove_dir_all("out").context("No build output to clean")
+    let config = config::load()?;
+
+    println!("Removing \"{}\"...", config.dirs.out);
+
+    fs::remove_dir_all(config.dirs.out).context("No build output to clean")
 }
