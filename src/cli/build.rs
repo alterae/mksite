@@ -1,6 +1,6 @@
 //! The `mksite build` subcommand.
 
-use std::{fs, path::Path};
+use std::{ffi::OsStr, fs, path::Path};
 
 use fs_extra::dir::CopyOptions;
 use tera::Tera;
@@ -15,8 +15,12 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
         "Cannot build site: {} not found",
         config::FILE_NAME
     );
+
+    println!("Loading config...");
     let config = config::load()?;
     let context = tera::Context::from_serialize(config.data)?;
+
+    println!("Building templates...\n");
     let tera = Tera::new(
         Path::new(&config.dirs.src)
             .join("**")
@@ -25,10 +29,8 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
             .unwrap(),
     )?;
 
-    println!("Building templates:\n");
-
     for template in tera.get_template_names() {
-        println!("Rendering {template}...");
+        println!("   Rendering {template}...");
         let output = tera.render(template, &context)?;
 
         let path = Path::new(&config.dirs.out).join(template);
@@ -37,11 +39,25 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
             fs::create_dir_all(p)?;
         }
 
-        // TODO: processing, layouts
+        match path.extension().and_then(OsStr::to_str) {
+            Some(ext) if config.transforms.contains_key(ext) => {
+                for (ext, proc) in &config.transforms[ext] {
+                    let path = &path.with_extension(ext);
 
-        println!("  Writing {path:?}...");
+                    println!("Transforming {path:?}...");
+                    let output = proc.apply(output.as_str())?;
 
-        fs::write(path, output)?;
+                    println!("     Writing {path:?}...");
+                    fs::write(path, output)?;
+                }
+            }
+            _ => {
+                println!("     Writing {path:?}...");
+                fs::write(path, output)?;
+            }
+        }
+
+        // TODO: layouts
     }
 
     if Path::new(&config.dirs.r#static).exists() {

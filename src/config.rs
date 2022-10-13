@@ -2,6 +2,8 @@
 
 use std::{collections::HashMap, fs, path};
 
+use crate::transform;
+
 /// The name of the config file to use.
 pub(crate) const FILE_NAME: &str = "mksite.toml";
 
@@ -12,15 +14,16 @@ pub(crate) struct Config {
     pub dirs: Dirs,
     /// Data to be passed to template rendering.
     pub data: HashMap<String, toml::Value>,
-    /// The list of processors to apply, stored as a map of input formats to
-    /// sub-maps of output formats and processors.
-    pub processors: HashMap<String, HashMap<String, Processor>>,
+    /// The list of transforms to apply, stored as a map of input formats to
+    /// sub-maps of output formats and transforms.
+    pub transforms: HashMap<String, HashMap<String, transform::Transform>>,
 }
 
 /// The names of all the important directories needed to build a site.
 #[derive(Debug, serde::Deserialize)]
 pub(crate) struct Dirs {
-    /// The src directory holds template files to be rendered and processed.
+    /// The src directory holds template files to be rendered, transformed, and
+    /// inserted into layouts.
     pub src: String,
     /// The out directory is where generated content goes.
     pub out: String,
@@ -28,30 +31,6 @@ pub(crate) struct Dirs {
     pub r#static: String,
     /// The layout directory is where layout files are stored.
     pub layout: String,
-}
-
-/// A processor is a command or pipeline of command for transforming content.
-/// Processors take an input string on standard input and return an output
-/// string on standard output.
-#[derive(Debug, PartialEq, serde::Deserialize)]
-#[serde(untagged)]
-pub(crate) enum Processor {
-    /// A processor with only one command.
-    ///
-    /// ## Example
-    /// ```toml
-    /// [processors]
-    /// md.html = "pandoc -f markdown -t html"
-    /// ```
-    Single(String),
-    /// A processor with multipe commands. The output of each command is piped
-    /// as the input to the next.
-    ///
-    /// ## Example
-    /// ```toml
-    /// [processors]
-    /// scd.html = [ "scdoc", "pandoc -f " ]
-    Chain(Vec<String>),
 }
 
 /// Returns true if the `mksite.toml` config file exists in the current directory.

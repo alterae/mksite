@@ -1,5 +1,4 @@
-# Default directory names.
-dirs.src = "src"       # The src directory contains all site content to be processed.
+dirs.src = "src"       # The src directory contains all non-static site content.
 dirs.out = "out"       # The out directory is where the generated site is written to.
 dirs.static = "static" # Content in the static directory is copied as-is to the out directory.
 dirs.layout = "layout" # The layout directory is where layouts live.
@@ -8,6 +7,6 @@ dirs.layout = "layout" # The layout directory is where layouts live.
 [data]
 # foo = "bar"
 
-# Processors are used to further transform content after applying templating.
-[processors]
+# Transforms are used to further transform content after applying templating.
+[transforms]
 # md.html = "pandoc -f markdown -t html"
