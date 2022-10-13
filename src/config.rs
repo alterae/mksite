@@ -1,3 +1,5 @@
+//! Config file generation, parsing, and loading.
+
 use std::{collections::HashMap, fs, path};
 
 /// The name of the config file to use.

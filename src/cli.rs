@@ -1,3 +1,5 @@
+//! Command-line interface definition and argument handling.
+
 use std::{fs, path::Path};
 
 use anyhow::Context;
