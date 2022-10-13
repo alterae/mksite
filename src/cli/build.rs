@@ -2,6 +2,7 @@
 
 use std::{fs, path::Path};
 
+use fs_extra::dir::CopyOptions;
 use tera::Tera;
 
 use crate::config;
@@ -36,16 +37,31 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
             fs::create_dir_all(p)?;
         }
 
-        // TODO: actuallly use these variables.
-        let (_, _, _) = (
-            &config.dirs.r#static,
-            &config.dirs.layout,
-            &config.processors,
-        );
+        // TODO: processing, layouts
 
         println!("  Writing {path:?}...");
 
         fs::write(path, output)?;
     }
+
+    if Path::new(&config.dirs.r#static).exists() {
+        println!("\nCopying static files...\n");
+
+        fs_extra::dir::copy(
+            config.dirs.r#static,
+            config.dirs.out,
+            &CopyOptions {
+                overwrite: true,
+                content_only: true,
+                ..Default::default()
+            },
+        )?;
+    } else {
+        println!(
+            "\nSkipping copying static files: no {:?} directory\n",
+            config.dirs.r#static
+        )
+    }
+
     Ok(())
 }
