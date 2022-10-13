@@ -3,26 +3,54 @@
 use std::{collections::HashMap, fs, path};
 
 /// The name of the config file to use.
-pub(crate) static FILE_NAME: &str = "mksite.toml";
+pub(crate) const FILE_NAME: &str = "mksite.toml";
 
-/// TODO: doc
-#[derive(Debug, PartialEq, Default, serde::Deserialize, serde::Serialize)]
+/// The configuration for a `mksite` project.
+#[derive(Debug, serde::Deserialize)]
 pub(crate) struct Config {
-    pub metadata: HashMap<String, toml::Value>,
+    /// The list of important directories.
+    pub dirs: Dirs,
+    /// Data to be passed to template rendering.
+    pub data: HashMap<String, toml::Value>,
+    /// The list of processors to apply, stored as a map of input formats to
+    /// sub-maps of output formats and processors.
     pub processors: HashMap<String, HashMap<String, Processor>>,
 }
 
-/// Loads the `mksite.toml` config file from the current directory.
-pub(crate) fn load() -> anyhow::Result<Config> {
-    let res = toml::from_str(&fs::read_to_string(FILE_NAME)?)?;
-    Ok(res)
+/// The names of all the important directories needed to build a site.
+#[derive(Debug, serde::Deserialize)]
+pub(crate) struct Dirs {
+    /// The src directory holds template files to be rendered and processed.
+    pub src: String,
+    /// The out directory is where generated content goes.
+    pub out: String,
+    /// Files in the static directory are copied as-is to the out directory.
+    pub r#static: String,
+    /// The layout directory is where layout files are stored.
+    pub layout: String,
 }
 
-/// TODO: doc
-#[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize)]
+/// A processor is a command or pipeline of command for transforming content.
+/// Processors take an input string on standard input and return an output
+/// string on standard output.
+#[derive(Debug, PartialEq, serde::Deserialize)]
 #[serde(untagged)]
 pub(crate) enum Processor {
+    /// A processor with only one command.
+    ///
+    /// ## Example
+    /// ```toml
+    /// [processors]
+    /// md.html = "pandoc -f markdown -t html"
+    /// ```
     Single(String),
+    /// A processor with multipe commands. The output of each command is piped
+    /// as the input to the next.
+    ///
+    /// ## Example
+    /// ```toml
+    /// [processors]
+    /// scd.html = [ "scdoc", "pandoc -f " ]
     Chain(Vec<String>),
 }
 
@@ -31,9 +59,18 @@ pub fn exists() -> bool {
     path::Path::new(FILE_NAME).exists()
 }
 
+/// Loads the `mksite.toml` config file from the current directory.
+pub(crate) fn load() -> anyhow::Result<Config> {
+    let res = toml::from_str(&fs::read_to_string(FILE_NAME)?)?;
+    Ok(res)
+}
+
 /// Generates the `mksite.toml` config file in the specified directory.
 /// `path` must be a directory.
-pub(crate) fn generate_config_file(path: &impl AsRef<path::Path>) -> anyhow::Result<()> {
+///
+/// The contents of this file are copied verbatim from `mksite.default.toml`
+/// via `include_str`.
+pub(crate) fn generate(path: &impl AsRef<path::Path>) -> anyhow::Result<()> {
     anyhow::ensure!(
         fs::metadata(path)?.is_dir(),
         "{:?} is not a directory",
@@ -51,45 +88,4 @@ pub(crate) fn generate_config_file(path: &impl AsRef<path::Path>) -> anyhow::Res
     )?;
 
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn serialize_config() {
-        let cfg: Config = toml::from_str(
-            r#"
-            [metadata]
-            foo = "bar"
-            year = 2022
-            bar = false
-
-            [processors]
-            md.html = "md2html"
-            scd.html = [ "scdoc", "pandoc -f man -t html" ]
-            "#,
-        )
-        .unwrap();
-
-        assert_eq!(
-            cfg,
-            Config {
-                metadata: maplit::hashmap! {
-                    "foo".into() => toml::Value::String("bar".into()),
-                    "year".into() => toml::Value::Integer(2022),
-                    "bar".into() => toml::Value::Boolean(false),
-                },
-                processors: maplit::hashmap! {
-                    "md".into() => maplit::hashmap! {
-                        "html".into() => Processor::Single("md2html".into()),
-                    },
-                    "scd".into() => maplit::hashmap! {
-                        "html".into() => Processor::Chain(vec!["scdoc".into(), "pandoc -f man -t html".into()])
-                    }
-                }
-            }
-        )
-    }
 }
