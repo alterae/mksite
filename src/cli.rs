@@ -1,6 +1,6 @@
 //! Command-line interface definition and argument handling.
 
-mod build;
+pub mod build;
 mod clean;
 mod init;
 mod new;

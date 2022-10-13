@@ -1,5 +1,7 @@
 //! The `mksite build` subcommand.
 
+pub mod transform;
+
 use std::{ffi::OsStr, fs, path::Path};
 
 use fs_extra::dir::CopyOptions;
