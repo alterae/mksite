@@ -5,7 +5,7 @@ mod clean;
 mod init;
 mod new;
 
-/// A format-agnostic static site generator.
+/// A file format-agnostic static site generator.
 #[derive(clap::Parser)]
 #[command(version)]
 pub(crate) struct Args {
