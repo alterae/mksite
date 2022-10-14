@@ -3,7 +3,7 @@
 all: docs
 
 docs:
-	cd docs && mksite build
+	cd docs && mksite clean && mksite build
 
 serve: docs
 	pnpx serve docs/out
