@@ -1,7 +1,15 @@
 [package]
 name = "mksite"
 version = "0.1.0"
+authors = ["alterae <alterae@pm.me>"]
 edition = "2021"
+description = "A file format-agnostic static site generator"
+homepage = "https://alterae.github.io/mksite"
+repository = "https://github.com/alterae/mksite"
+license = "MIT"
+keywords = ["static-site-generator", "ssg", "static", "site", "generator"]
+categories = ["command-line-utilities"]
+exclude = ["/example"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
