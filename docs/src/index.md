@@ -91,9 +91,9 @@ _Default_ layouts have the name `_.ext`, where `ext` is some file extension. Def
 ```
 layout/
     _.html
-	blog/
-	    _.html
-		index.html
+    blog/
+        _.html
+        index.html
 ```
 
 In this example, `layout/blog/_.html` will apply to all html files in `out/` _except_ `index.html`, and `layout/_.html` will apply to every html file in `out/` _except_ the contents of the `blog` directory.
