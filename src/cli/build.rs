@@ -20,7 +20,8 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
 
     println!("Loading config...");
     let config = config::load()?;
-    let context = tera::Context::from_serialize(config.data)?;
+    let mut context = tera::Context::new();
+    context.insert("data", &config.data);
 
     println!("Building templates...\n");
     let tera = Tera::new(
@@ -129,6 +130,7 @@ pub fn apply_layout(path: &Path, body: &[u8]) -> anyhow::Result<Vec<u8>> {
     if let Some(layout) = layout {
         println!("    Applying layout {layout:?}...");
         let mut context = tera::Context::new();
+        context.insert("data", &config.data);
         context.insert("content", &String::from_utf8(body.to_owned())?);
 
         Ok(layouts
