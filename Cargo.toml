@@ -7,7 +7,7 @@ description = "A file format-agnostic static site generator"
 homepage = "https://alterae.github.io/mksite"
 repository = "https://github.com/alterae/mksite"
 license = "MIT"
-keywords = ["static-site-generator", "ssg", "static", "site", "generator"]
+keywords = ["ssg", "static", "site", "generator"]
 categories = ["command-line-utilities"]
 exclude = ["/docs", "/.github", "/Makefile"]
 
