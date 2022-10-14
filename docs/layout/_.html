@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mksite - a file format-agnostic static site generator</title>
+    <meta
+      name="description"
+      content="A file format-agnostic static site generator"
+    />
+    <link rel="stylesheet" href="https://use.typekit.net/vjm1ksa.css" />
+    <link rel="stylesheet" href="{{ data.base_path | safe }}/style.css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  </head>
+
+  <body>
+    <header>
+      <a href="{{ data.base_path | safe }}/">
+        <h1 style="font-family: 'input-mono-narrow', monospace">mksite</h1>
+      </a>
+      <nav>
+        <ul>
+          <li>
+            <a href="{{ data.github | safe }}">source (GitHub)</a>
+          </li>
+          <li>by <a href="/">alterae</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main><article>{{ content | safe }}</article></main>
+  </body>
+</html>

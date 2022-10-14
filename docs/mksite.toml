@@ -5,8 +5,9 @@ dirs.layout = "layout" # The layout directory is where layouts live.
 
 # The contents of the data section are made available in template rendering.
 [data]
-# foo = "bar"
+base_path = "/mksite"
+github = "https://github.com/alterae/mksite"
 
 # Transforms are used to further transform content after applying templating.
 [transforms]
-md.html = "pandoc -s -f markdown"
+md.html = "pandoc -f markdown -t html5 --number-offset=1"

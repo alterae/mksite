@@ -139,6 +139,10 @@ Will use [`scdoc`](https://git.sr.ht/~sircmpwn/scdoc) to generate a man page fro
 
 Pull requests and issues are welcome, but please ensure you run `cargo fmt` before submitting a PR.
 
+## Example
+
+See the [`docs/`](./docs/) folder for an example of a website built using `mksite`.
+
 ## License
 
 `mksite` is licensed under the [MIT License](./LICENSE).

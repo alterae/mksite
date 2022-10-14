@@ -1,15 +1,13 @@
-# `mksite`
+# `mksite` {-}
 
 A file format-agnostic static site generator
-
-Find it on [GitHub](https://github.com/alterae/mksite)
 
 ## Installation
 
 If you already have [Rust](https://www.rust-lang.org) and [Cargo](https://doc.rust-lang.org/cargo/) installed:
 
 ```sh
-cargo install --git https://github.com/alterae/mksite
+cargo install --git {{ data.github }}
 ```
 
 ## Usage
@@ -99,6 +97,7 @@ layout/
 In this example, `layout/blog/_.html` will apply to all html files in `out/` _except_ `index.html`, and `layout/_.html` will apply to every html file in `out/` _except_ the contents of the `blog` directory.
 
 > **Note**
+>
 > Layouts are applied _after_ transforms, based on the file extension of the transform output. As a result, a layout like `_.html` will apply to _all_ generated html files, regardless of whether these html files were hand-written or generated from markdown or something else via a transform.
 
 If no applicable layouts are found for a file, or if there is no `layout/` no layout will be applied.
@@ -119,6 +118,7 @@ A transform has an _input extension_, an _output extension_, and a _command_ or 
 Each page in `src/` with a file extension matching a transform's input extension is piped into the transform as a stream of bytes, and the resulting stream of bytes is written to a file in the `out/` directory with the same name and path, and a file extension matching the transform's output extension. _Each page can be piped to multiple transforms, and multiple transforms can output the same format._ The relationship between inputs and outputs is many-to-many.
 
 > **Warning**
+>
 > It is important to note that the inputs and outputs of transforms are _streams of arbitrary bytes_, not necessarily valid UTF-8 strings. This is important for interfacing with external non-rust tools, but there are some caveats:
 >
 > Though this may change in the future, at present all templates and layouts _must_ be valid UTF-8. This means that while transforms can both input and output arbitrary bytes, the original input to a transform (a file in the `src/` directory) will be UTF-8. Additionally, layouts for non-UTF-8 files **are not supported**, and attempting to define a layout for, say, a `.pdf` file will result in an error.
@@ -145,6 +145,10 @@ Will use [`scdoc`](https://git.sr.ht/~sircmpwn/scdoc) to generate a man page fro
 ## Contributing
 
 Pull requests and issues are welcome, but please ensure you run `cargo fmt` before submitting a PR.
+
+## Example
+
+See the [source code for this website]({{ data.github }}/tree/main/docs).
 
 ## License
 

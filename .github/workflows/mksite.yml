@@ -42,7 +42,7 @@ jobs:
         uses: actions/configure-pages@v2
       - name: Build with mksite
         run: |
-          cd docs && cargo run build
+          make gh-pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
