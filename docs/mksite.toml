@@ -7,6 +7,7 @@ dirs.layout = "layout" # The layout directory is where layouts live.
 [data]
 base_path = "/mksite"
 github = "https://github.com/alterae/mksite"
+crate = "https://crates.io/crates/mksite"
 
 # Transforms are used to further transform content after applying templating.
 [transforms]

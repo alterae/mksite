@@ -7,6 +7,12 @@ A file format-agnostic static site generator
 If you already have [Rust](https://www.rust-lang.org) and [Cargo](https://doc.rust-lang.org/cargo/) installed:
 
 ```sh
+cargo install mksite
+```
+
+Alternatively, you can install via git:
+
+```sh
 cargo install --git {{ data.github }}
 ```
 
