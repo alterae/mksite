@@ -2,6 +2,6 @@
 [data]
 # foo = "bar"
 
-# Transforms are used to further transform content after applying templating.
+# Transforms are used to further transform content after template rendering.
 [transforms]
 # md.html = "pandoc -f markdown -t html"
