@@ -1,7 +1,5 @@
 //! The `mksite build` subcommand.
 
-pub mod transform;
-
 use std::{ffi::OsStr, fs, path::Path};
 
 use fs_extra::dir::CopyOptions;
@@ -45,11 +43,11 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
         // FIXME: maybe use OsStrs in the config file?
         match path.extension().and_then(OsStr::to_str) {
             Some(ext) if config.transforms.contains_key(ext) => {
-                for (ext, proc) in &config.transforms[ext] {
+                for (ext, transform) in &config.transforms[ext] {
                     let path = &path.with_extension(ext);
 
                     println!("Transforming {path:?}...");
-                    let output = proc.apply(output.as_bytes())?;
+                    let output = transform.apply(output.as_bytes())?;
 
                     let output = apply_layout(path, &output)?;
                     println!("     Writing {path:?}...");

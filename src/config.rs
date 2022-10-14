@@ -2,7 +2,7 @@
 
 use std::{collections::HashMap, fs, path};
 
-use crate::cli::build::transform;
+use crate::transform;
 
 /// The name of the config file to use.
 pub(crate) const FILE_NAME: &str = "mksite.toml";
