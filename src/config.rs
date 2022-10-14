@@ -33,6 +33,17 @@ pub(crate) struct Dirs {
     pub layout: String,
 }
 
+impl Default for Dirs {
+    fn default() -> Self {
+        Self {
+            src: "src".into(),
+            out: "out".into(),
+            r#static: "static".into(),
+            layout: "layout".into(),
+        }
+    }
+}
+
 /// Returns true if the `mksite.toml` config file exists in the current directory.
 pub fn exists() -> bool {
     path::Path::new(FILE_NAME).exists()
