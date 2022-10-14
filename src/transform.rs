@@ -41,7 +41,7 @@ impl Transform {
 
 // TODO: move to own module
 pub(crate) fn exec(input: Vec<u8>, command: &String) -> anyhow::Result<Vec<u8>> {
-    println!("    Applying `{command}'...");
+    log::info!("Applying `{command}'");
 
     let argv = shell_words::split(command)?;
 

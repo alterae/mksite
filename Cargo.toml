@@ -17,8 +17,10 @@ exclude = ["/docs", "/.github", "/Makefile"]
 anyhow = "1.0.65"
 clap = { version = "4.0.14", features = ["derive"] }
 fs_extra = "1.2.0"
+log = "0.4.17"
 maplit = "1.0.2"
 serde = { version = "1.0.145", features = ["derive"] }
 shell-words = "1.1.0"
+stderrlog = "0.5.3"
 tera = "1.17.1"
 toml = "0.5.9"

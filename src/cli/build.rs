@@ -16,12 +16,12 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
         config::FILE_NAME
     );
 
-    println!("Loading config...");
+    log::debug!("Loading config...");
     let config = config::load()?;
     let mut context = tera::Context::new();
     context.insert("data", &config.data);
 
-    println!("Building templates...\n");
+    log::debug!("Building templates");
     let tera = Tera::new(
         Path::new(&config.dirs.src)
             .join("**")
@@ -31,7 +31,7 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
     )?;
 
     for template in tera.get_template_names() {
-        println!("   Rendering {template}...");
+        log::info!("Rendering {template}");
         let output = tera.render(template, &context)?;
 
         let path = Path::new(&config.dirs.out).join(template);
@@ -46,24 +46,24 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
                 for (ext, transform) in &config.transforms[ext] {
                     let path = &path.with_extension(ext);
 
-                    println!("Transforming {path:?}...");
+                    log::debug!("Transforming {path:?}");
                     let output = transform.apply(output.as_bytes())?;
 
                     let output = apply_layout(path, &output)?;
-                    println!("     Writing {path:?}...");
+                    log::info!("Writing {path:?}");
                     fs::write(path, output)?;
                 }
             }
             _ => {
                 let output = apply_layout(&path, output.as_bytes())?;
-                println!("     Writing {path:?}...");
+                log::info!("Writing {path:?}");
                 fs::write(&path, output)?;
             }
         }
     }
 
     if Path::new(&config.dirs.r#static).exists() {
-        println!("\nCopying static files...\n");
+        log::info!("Copying static files");
 
         // TODO: implement this manually at some point because `fs_extra` is a
         // poorly documented black with limited introspection capabilities.
@@ -77,8 +77,8 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
             },
         )?;
     } else {
-        println!(
-            "\nSkipping copying static files: no {:?} directory\n",
+        log::warn!(
+            "Skipping copying static files: no {:?} directory",
             config.dirs.r#static
         )
     }
@@ -126,7 +126,7 @@ pub fn apply_layout(path: &Path, body: &[u8]) -> anyhow::Result<Vec<u8>> {
     };
 
     if let Some(layout) = layout {
-        println!("    Applying layout {layout:?}...");
+        log::info!("Applying layout {layout:?}");
         let mut context = tera::Context::new();
         context.insert("data", &config.data);
         context.insert("content", &String::from_utf8(body.to_owned())?);

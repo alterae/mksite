@@ -16,7 +16,8 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
 
     let config = config::load()?;
 
-    println!("Removing \"{}\"...", config.dirs.out);
+    log::info!("Removing \"{}\"", config.dirs.out);
 
+    // FIXME: handle this more gracefully
     fs::remove_dir_all(config.dirs.out).context("No build output to clean")
 }

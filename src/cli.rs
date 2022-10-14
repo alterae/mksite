@@ -12,6 +12,12 @@ pub(crate) struct Args {
     /// The subcommand to run.
     #[command(subcommand)]
     pub command: Command,
+    /// Do not print log messages.
+    #[arg(short, long)]
+    pub quiet: bool,
+    /// Use verbose output (-v, -vv, -vvv etc.).
+    #[arg(short, long, action=clap::ArgAction::Count)]
+    pub verbose: u8,
 }
 
 #[derive(clap::Subcommand)]
