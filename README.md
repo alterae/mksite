@@ -62,6 +62,9 @@ scd.html = ["scdoc", "pandoc -f man -t html"]
 
 The first four lines tell `mksite` the names of the `src/`, `out/`, `static/`, and `layout/` directories, respectively. Changing these will change where `mksite` reads and writes data. For example, `dirs.out = "www"` would cause `mksite` to write the build output in a folder called `www/`.
 
+> **Note**
+> The `dirs` keys are optional. However, if any of them are present, the rest must also be present.
+
 Next is the **`data`** section, which is where you can define arbitrary data that will be passed to the template rendering. In templates, this data will be made available under the `data` variable. For details on the template syntax, see the [Tera documentation](https://tera.netlify.app/docs/).
 
 Finally, we have the **`transforms`** section. _Transforms_ are commands or chains of commands that take a stream of bytes on standard input, and return a stream of bytes for standard output. Transforms can be used to trivially implement many features `mksite` does not natively support, such as markdown rendering and syntax highlighting. The basic syntax of a transform definition is `in.out = "command"` or `in.out = ["command1", "command2", ...]` where `in` is the file extension the transform operates on, `out` is the file extension the transform produces, and `command` is a command to pipe the page through. For more details on the finer points of transforms, see [below](#transforms).

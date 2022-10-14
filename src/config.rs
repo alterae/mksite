@@ -11,6 +11,10 @@ pub(crate) const FILE_NAME: &str = "mksite.toml";
 #[derive(Debug, serde::Deserialize)]
 pub(crate) struct Config {
     /// The list of important directories.
+    ///
+    /// FIXME: The whole key can be omitted, but if any of them are specified
+    /// manually, all of them have to be.
+    #[serde(default)]
     pub dirs: Dirs,
     /// Data to be passed to template rendering.
     pub data: HashMap<String, toml::Value>,
