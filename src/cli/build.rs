@@ -7,15 +7,11 @@ use tera::Tera;
 
 use crate::config;
 
+use crate::Result;
+
 /// Loads all the templates in the `src/` directory and renders them using the
 /// metadata defined in `mksite.toml`.
-pub(crate) fn cmd() -> anyhow::Result<()> {
-    anyhow::ensure!(
-        config::exists(),
-        "Cannot build site: {} not found",
-        config::FILE_NAME
-    );
-
+pub(crate) fn cmd() -> Result<()> {
     log::debug!("Loading config");
     let config = config::load()?;
     let mut context = tera::Context::new();
@@ -86,7 +82,7 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn apply_layout(path: &Path, body: &[u8]) -> anyhow::Result<Vec<u8>> {
+pub(crate) fn apply_layout(path: &Path, body: &[u8]) -> Result<Vec<u8>> {
     let config = config::load()?;
     let stripped = path.strip_prefix(config.dirs.out)?;
     let path = Path::new(&config.dirs.layout).join(stripped);

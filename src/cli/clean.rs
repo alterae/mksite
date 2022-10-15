@@ -2,10 +2,10 @@
 
 use std::{fs, io};
 
-use crate::config;
+use crate::{config, Result};
 
 /// Deletes the `out/` directory and all its contents.
-pub(crate) fn cmd() -> config::Result<()> {
+pub(crate) fn cmd() -> Result<()> {
     let config = config::load()?;
 
     log::info!("Removing \"{}\"", config.dirs.out);

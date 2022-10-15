@@ -2,7 +2,10 @@ use clap::Parser;
 
 mod cli;
 mod config;
+mod error;
 mod transform;
+
+pub(crate) use error::*;
 
 fn main() {
     let args = cli::Args::parse();
@@ -12,7 +15,7 @@ fn main() {
     args.command.run().unwrap_or_else(|e| log::error!("{e}"))
 }
 
-fn setup_logger(level: log::LevelFilter, quiet: bool) -> Result<(), fern::InitError> {
+fn setup_logger(level: log::LevelFilter, quiet: bool) -> Result<()> {
     use colored::{Color, Colorize};
 
     fern::Dispatch::new()

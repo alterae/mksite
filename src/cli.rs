@@ -1,6 +1,6 @@
 //! Command-line interface definition and argument handling.
 
-pub mod build;
+pub(crate) mod build;
 mod clean;
 mod init;
 mod new;
@@ -11,15 +11,15 @@ mod new;
 pub(crate) struct Args {
     /// The subcommand to run.
     #[command(subcommand)]
-    pub command: Command,
+    pub(crate) command: Command,
 
     /// Do not print log messages.
     #[arg(short, long, conflicts_with = "log_level")]
-    pub quiet: bool,
+    pub(crate) quiet: bool,
 
     /// What level of logging to enable (error, warn, info, debug, or trace).
     #[arg(long, default_value = "info")]
-    pub log_level: log::LevelFilter,
+    pub(crate) log_level: log::LevelFilter,
 }
 
 #[derive(clap::Subcommand)]
@@ -39,13 +39,12 @@ pub(crate) enum Command {
 
 impl Command {
     /// Runs the given command.
-    pub(crate) fn run(self) -> anyhow::Result<()> {
+    pub(crate) fn run(self) -> crate::Result<()> {
         match self {
             Self::Build => build::cmd(),
-            // FIXME: address these Ok(_?) shenanigans
-            Self::Clean => Ok(clean::cmd()?),
-            Self::Init => init::cmd(),
-            Self::New { name } => new::cmd(name),
+            Self::Clean => clean::cmd(),
+            Self::Init => init::cmd().map_err(|e| e.into()),
+            Self::New { name } => new::cmd(name).map_err(|e| e.into()),
         }
     }
 }

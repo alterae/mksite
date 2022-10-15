@@ -5,6 +5,8 @@ use std::{
     process::{Command, Stdio},
 };
 
+use crate::Result;
+
 /// A transform is a command or pipeline of command for transforming content.
 /// Transforms take an input string on standard input and return an output
 /// string on standard output.
@@ -31,7 +33,7 @@ pub(crate) enum Transform {
 
 // TODO: move to own module
 impl Transform {
-    pub(crate) fn apply(&self, input: &[u8]) -> anyhow::Result<Vec<u8>> {
+    pub(crate) fn apply(&self, input: &[u8]) -> Result<Vec<u8>> {
         match self {
             Self::Single(command) => exec(input.into(), command),
             Self::Chain(commands) => commands.iter().try_fold(input.into(), exec),
@@ -40,7 +42,7 @@ impl Transform {
 }
 
 // TODO: move to own module
-pub(crate) fn exec(input: Vec<u8>, command: &String) -> anyhow::Result<Vec<u8>> {
+pub(crate) fn exec(input: Vec<u8>, command: &String) -> Result<Vec<u8>> {
     log::info!("Applying `{command}'");
 
     let argv = shell_words::split(command)?;
