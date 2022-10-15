@@ -29,6 +29,8 @@ Commands:
   help   Print this message or the help of the given subcommand(s)
 
 Options:
+  -q, --quiet                  Do not print log messages
+      --log-level <LOG_LEVEL>  What level of logging to enable (error, warn, info, debug, or trace) [default: info]
   -h, --help     Print help information
   -V, --version  Print version information
 ```
