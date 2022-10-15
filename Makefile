@@ -1,12 +1,18 @@
-.PHONY: all docs serve gh-pages
+.PHONY: all build clean clean-docs docs serve
 
 all: docs
 
+build:
+	@cargo build
+
+clean:
+	@cargo clean
+
+clean-docs:
+	@cd docs && cargo run clean
+
 docs:
-	cd docs && cargo r clean && cargo r build
+	@cd docs && cargo run build
 
-serve: docs
-	pnpx serve docs/out
-
-gh-pages:
-	cd docs && cargo r build
+serve: clean-docs docs
+	@pnpx serve docs/out
