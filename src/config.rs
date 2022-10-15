@@ -1,6 +1,8 @@
 //! Config file generation, parsing, and loading.
 
-use std::{collections::HashMap, fs, path};
+use std::{collections::HashMap, fs, io, path};
+
+use thiserror::Error;
 
 use crate::transform;
 
@@ -48,15 +50,24 @@ impl Default for Dirs {
     }
 }
 
+#[derive(Error, Debug)]
+pub enum Error {
+    #[error("Failed to deserialize config: {0}")]
+    Deserialization(#[from] toml::de::Error),
+    #[error("{0}")]
+    Io(#[from] io::Error),
+}
+
+pub type Result<T> = std::result::Result<T, Error>;
+
 /// Returns true if the `mksite.toml` config file exists in the current directory.
 pub fn exists() -> bool {
     path::Path::new(FILE_NAME).exists()
 }
 
 /// Loads the `mksite.toml` config file from the current directory.
-pub(crate) fn load() -> anyhow::Result<Config> {
-    let res = toml::from_str(&fs::read_to_string(FILE_NAME)?)?;
-    Ok(res)
+pub(crate) fn load() -> Result<Config> {
+    toml::from_str(&fs::read_to_string(FILE_NAME)?).map_err(Error::from)
 }
 
 /// Generates the `mksite.toml` config file in the specified directory.

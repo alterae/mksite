@@ -471,6 +471,7 @@ dependencies = [
  "serde",
  "shell-words",
  "tera",
+ "thiserror",
  "toml",
 ]
 

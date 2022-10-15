@@ -42,7 +42,8 @@ impl Command {
     pub(crate) fn run(self) -> anyhow::Result<()> {
         match self {
             Self::Build => build::cmd(),
-            Self::Clean => clean::cmd(),
+            // FIXME: address these Ok(_?) shenanigans
+            Self::Clean => Ok(clean::cmd()?),
             Self::Init => init::cmd(),
             Self::New { name } => new::cmd(name),
         }

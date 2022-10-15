@@ -1,23 +1,20 @@
 //! The `mksite clean` subcommand.
 
-use std::fs;
-
-use anyhow::Context;
+use std::{fs, io};
 
 use crate::config;
 
 /// Deletes the `out/` directory and all its contents.
-pub(crate) fn cmd() -> anyhow::Result<()> {
-    anyhow::ensure!(
-        config::exists(),
-        "Cannot clean site: {} not found",
-        config::FILE_NAME
-    );
-
+pub(crate) fn cmd() -> config::Result<()> {
     let config = config::load()?;
 
     log::info!("Removing \"{}\"", config.dirs.out);
 
-    // FIXME: handle this more gracefully
-    fs::remove_dir_all(config.dirs.out).context("No build output to clean")
+    fs::remove_dir_all(&config.dirs.out).or_else(|e| match e.kind() {
+        io::ErrorKind::NotFound => {
+            log::warn!("Cannot remove \"{}\": {e}", config.dirs.out);
+            Ok(())
+        }
+        _ => Err(e.into()),
+    })
 }
