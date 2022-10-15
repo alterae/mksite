@@ -7,7 +7,7 @@ use tera::Tera;
 
 use crate::config;
 
-use crate::Result;
+use crate::{Error, Result};
 
 /// Loads all the templates in the `src/` directory and renders them using the
 /// metadata defined in `mksite.toml`.
@@ -33,7 +33,10 @@ pub(crate) fn cmd() -> Result<()> {
         let path = Path::new(&config.dirs.out).join(template);
 
         if let Some(p) = path.parent() {
-            fs::create_dir_all(p)?;
+            fs::create_dir_all(p).map_err(|source| Error::Io {
+                msg: format!("Cannot create {p:?}"),
+                source,
+            })?;
         }
 
         // FIXME: maybe use OsStrs in the config file?
@@ -47,13 +50,19 @@ pub(crate) fn cmd() -> Result<()> {
 
                     let output = apply_layout(path, &output)?;
                     log::info!("Writing {path:?}");
-                    fs::write(path, output)?;
+                    fs::write(path, output).map_err(|source| Error::Io {
+                        msg: format!("Cannot write {path:?}"),
+                        source,
+                    })?;
                 }
             }
             _ => {
                 let output = apply_layout(&path, output.as_bytes())?;
                 log::info!("Writing {path:?}");
-                fs::write(&path, output)?;
+                fs::write(&path, output).map_err(|source| Error::Io {
+                    msg: format!("Cannot write {path:?}"),
+                    source,
+                })?;
             }
         }
     }
@@ -84,7 +93,13 @@ pub(crate) fn cmd() -> Result<()> {
 
 pub(crate) fn apply_layout(path: &Path, body: &[u8]) -> Result<Vec<u8>> {
     let config = config::load()?;
-    let stripped = path.strip_prefix(config.dirs.out)?;
+    let stripped = path
+        .strip_prefix(&config.dirs.out)
+        .map_err(|source| Error::StripPath {
+            path: path.into(),
+            prefix: config.dirs.out,
+            source,
+        })?;
     let path = Path::new(&config.dirs.layout).join(stripped);
     let wildcard = format!(
         "_{}",
@@ -109,7 +124,15 @@ pub(crate) fn apply_layout(path: &Path, body: &[u8]) -> Result<Vec<u8>> {
         for ancestor in path.ancestors() {
             let path = ancestor.join(&wildcard);
             res = if path.exists() {
-                Some(path.strip_prefix(&config.dirs.layout)?.to_owned())
+                Some(
+                    path.strip_prefix(&config.dirs.layout)
+                        .map_err(|source| Error::StripPath {
+                            path: path.clone(),
+                            prefix: config.dirs.layout.clone(),
+                            source,
+                        })?
+                        .to_owned(),
+                )
             } else {
                 None
             };
@@ -125,7 +148,13 @@ pub(crate) fn apply_layout(path: &Path, body: &[u8]) -> Result<Vec<u8>> {
         log::info!("Applying layout {layout:?}");
         let mut context = tera::Context::new();
         context.insert("data", &config.data);
-        context.insert("content", &String::from_utf8(body.to_owned())?);
+        context.insert(
+            "content",
+            &String::from_utf8(body.to_owned()).map_err(|source| Error::FromUtf8 {
+                msg: format!("Cannot apply layout {layout:?} to {path:?}"),
+                source,
+            })?,
+        );
 
         Ok(layouts
             .render(layout.to_str().unwrap(), &context)?

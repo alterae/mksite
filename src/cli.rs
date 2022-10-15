@@ -43,8 +43,8 @@ impl Command {
         match self {
             Self::Build => build::cmd(),
             Self::Clean => clean::cmd(),
-            Self::Init => init::cmd().map_err(|e| e.into()),
-            Self::New { name } => new::cmd(name).map_err(|e| e.into()),
+            Self::Init => init::cmd(),
+            Self::New { name } => new::cmd(name),
         }
     }
 }

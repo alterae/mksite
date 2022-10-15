@@ -15,6 +15,9 @@ pub(crate) fn cmd() -> Result<()> {
             log::warn!("Cannot remove \"{}\": {e}", config.dirs.out);
             Ok(())
         }
-        _ => Err(e.into()),
+        _ => Err(crate::Error::Io {
+            msg: format!("Cannot remove \"{}\"", config.dirs.out),
+            source: e,
+        }),
     })
 }

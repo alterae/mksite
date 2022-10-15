@@ -1,13 +1,8 @@
 //! Config file generation, parsing, and loading.
 
-use std::{
-    collections::HashMap,
-    fs,
-    io::{self, Write},
-    path,
-};
+use std::{collections::HashMap, fs, io::Write, path};
 
-use crate::Result;
+use crate::{Error, Result};
 
 use crate::transform;
 
@@ -57,7 +52,12 @@ impl Default for Dirs {
 
 /// Loads the `mksite.toml` config file from the current directory.
 pub(crate) fn load() -> Result<Config> {
-    toml::from_str(&fs::read_to_string(FILE_NAME)?).map_err(|e| e.into())
+    let config = fs::read_to_string(FILE_NAME).map_err(|source| Error::Io {
+        msg: format!("Cannot read {FILE_NAME}"),
+        source,
+    })?;
+
+    toml::from_str(&config).map_err(|source| source.into())
 }
 
 /// Generates the `mksite.toml` config file in the specified directory.
@@ -65,11 +65,25 @@ pub(crate) fn load() -> Result<Config> {
 ///
 /// The contents of this file are copied verbatim from `mksite.default.toml`
 /// via `include_str`.
-pub(crate) fn generate(path: &path::Path) -> io::Result<()> {
-    let mut file = fs::OpenOptions::new()
+pub(crate) fn generate(path: &path::Path) -> Result<()> {
+    let file = fs::OpenOptions::new()
         .write(true)
         .create_new(true)
-        .open(path.join(FILE_NAME))?;
+        .open(path.join(FILE_NAME));
+
+    let mut file = match file {
+        Ok(file) => file,
+        Err(source) => {
+            return Err(Error::Io {
+                msg: format!("Cannot create {path:?}"),
+                source,
+            })
+        }
+    };
 
     file.write_all(include_str!("../mksite.default.toml").as_bytes())
+        .map_err(|source| Error::Io {
+            msg: format!("Cannot write {path:?}"),
+            source,
+        })
 }

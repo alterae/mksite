@@ -5,7 +5,7 @@ use std::{
     process::{Command, Stdio},
 };
 
-use crate::Result;
+use crate::{Error, Result};
 
 /// A transform is a command or pipeline of command for transforming content.
 /// Transforms take an input string on standard input and return an output
@@ -45,15 +45,35 @@ impl Transform {
 pub(crate) fn exec(input: Vec<u8>, command: &String) -> Result<Vec<u8>> {
     log::info!("Applying `{command}'");
 
-    let argv = shell_words::split(command)?;
+    let argv = shell_words::split(command).map_err(|source| Error::Shell {
+        command: command.clone(),
+        source,
+    })?;
 
     let mut proc = Command::new(&argv[0])
         .args(&argv[1..])
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
-        .spawn()?;
+        .spawn()
+        .map_err(|source| Error::Io {
+            msg: format!("Cannot run `{command}'"),
+            source,
+        })?;
 
-    proc.stdin.take().unwrap().write_all(&input)?;
+    proc.stdin
+        .take()
+        .unwrap()
+        .write_all(&input)
+        .map_err(|source| Error::Io {
+            msg: format!("Cannot pipe to `{command}'"),
+            source,
+        })?;
 
-    Ok(proc.wait_with_output()?.stdout)
+    Ok(proc
+        .wait_with_output()
+        .map_err(|source| Error::Io {
+            msg: format!("Error while waiting on `{command}'"),
+            source,
+        })?
+        .stdout)
 }
