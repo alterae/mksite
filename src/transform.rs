@@ -31,8 +31,9 @@ pub(crate) enum Transform {
     Chain(Vec<String>),
 }
 
-// TODO: move to own module
 impl Transform {
+    /// Tries to apply this transform to the given input, and returns the
+    /// output.
     pub(crate) fn apply(&self, input: &[u8]) -> Result<Vec<u8>> {
         match self {
             Self::Single(command) => exec(input.into(), command),
@@ -41,7 +42,7 @@ impl Transform {
     }
 }
 
-// TODO: move to own module
+/// Tries to run a shell command with the given input, and returns the output.
 pub(crate) fn exec(input: Vec<u8>, command: &String) -> Result<Vec<u8>> {
     log::info!("Applying `{command}'");
 

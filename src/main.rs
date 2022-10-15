@@ -1,8 +1,12 @@
+//! Binary crate root for `mksite`.
+#![warn(clippy::missing_docs_in_private_items)]
+
 use clap::Parser;
 
 mod cli;
 mod config;
 mod error;
+mod site;
 mod transform;
 
 pub(crate) use error::*;
@@ -15,6 +19,8 @@ fn main() {
     args.command.run().unwrap_or_else(|e| log::error!("{e}"))
 }
 
+/// Initializes the global logger via `fern` to the specified verbosity level.
+/// If `quiet` is true, no output will be printed.
 fn setup_logger(level: log::LevelFilter, quiet: bool) -> Result<()> {
     use colored::{Color, Colorize};
 

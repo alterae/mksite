@@ -22,6 +22,7 @@ pub(crate) struct Args {
     pub(crate) log_level: log::LevelFilter,
 }
 
+/// Enum of subcommands.
 #[derive(clap::Subcommand)]
 pub(crate) enum Command {
     /// Build the site according to `mksite.toml`.

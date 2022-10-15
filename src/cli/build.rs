@@ -91,6 +91,7 @@ pub(crate) fn cmd() -> Result<()> {
     Ok(())
 }
 
+/// Applies a layout to a page.
 pub(crate) fn apply_layout(path: &Path, body: &[u8]) -> Result<Vec<u8>> {
     let config = config::load()?;
     let stripped = path
