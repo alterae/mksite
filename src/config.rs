@@ -65,11 +65,11 @@ pub(crate) fn load() -> Result<Config> {
 ///
 /// The contents of this file are copied verbatim from `mksite.default.toml`
 /// via `include_str`.
-pub(crate) fn generate(path: &impl AsRef<path::Path>) -> io::Result<()> {
+pub(crate) fn generate(path: &path::Path) -> io::Result<()> {
     let mut file = fs::OpenOptions::new()
         .write(true)
         .create_new(true)
-        .open(path)?;
+        .open(path.join(FILE_NAME))?;
 
     file.write_all(include_str!("../mksite.default.toml").as_bytes())
 }

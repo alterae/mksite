@@ -16,5 +16,5 @@ pub(crate) fn cmd(name: String) -> io::Result<()> {
     fs::create_dir(Path::new(&name).join("static"))?;
     fs::create_dir(Path::new(&name).join("layout"))?;
 
-    config::generate(&Path::new(&name))
+    config::generate(Path::new(&name))
 }
