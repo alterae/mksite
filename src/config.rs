@@ -19,9 +19,11 @@ pub(crate) struct Config {
     /// manually, all of them have to be.
     #[serde(default)]
     pub(crate) dirs: Dirs,
+
     /// Data to be passed to template rendering.
     #[serde(default)]
     pub(crate) data: HashMap<String, toml::Value>,
+
     /// The list of transforms to apply, stored as a map of input formats to
     /// sub-maps of output formats and transforms.
     #[serde(default)]
@@ -35,12 +37,15 @@ pub(crate) struct Dirs {
     /// inserted into layouts.
     #[serde(default = "Dirs::default_src")]
     pub(crate) src: String,
+
     /// The out directory is where generated content goes.
     #[serde(default = "Dirs::default_out")]
     pub(crate) out: String,
+
     /// Files in the static directory are copied as-is to the out directory.
     #[serde(default = "Dirs::default_static")]
     pub(crate) r#static: String,
+
     /// The layout directory is where layout files are stored.
     #[serde(default = "Dirs::default_layout")]
     pub(crate) layout: String,

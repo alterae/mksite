@@ -21,6 +21,7 @@ pub(crate) enum Transform {
     /// md.html = "pandoc -f markdown -t html"
     /// ```
     Single(String),
+    
     /// A transforms with multipe commands. The output of each command is piped
     /// as the input to the next.
     ///

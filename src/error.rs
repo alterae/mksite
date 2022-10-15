@@ -9,6 +9,7 @@ pub(crate) enum Error {
     Io {
         /// A message detailing what context the error occured in.
         msg: String,
+
         /// The wrapped error that caused this error.
         source: io::Error,
     },
@@ -32,6 +33,7 @@ pub(crate) enum Error {
     Shell {
         /// The command that failed to parse.
         command: String,
+
         /// The wrapped error that caused this error.
         source: shell_words::ParseError,
     },
@@ -41,8 +43,10 @@ pub(crate) enum Error {
     StripPath {
         /// The path that could not be stripped.
         path: path::PathBuf,
+
         /// The prefix that could not be stripped from the path.
         prefix: String,
+
         /// The wrapped error that caused this error.
         source: path::StripPrefixError,
     },
@@ -52,6 +56,7 @@ pub(crate) enum Error {
     FromUtf8 {
         /// A message detailing what context the error occured in.
         msg: String,
+
         /// The wrapped error that caused this error.
         source: std::string::FromUtf8Error,
     },
