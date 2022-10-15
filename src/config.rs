@@ -10,7 +10,8 @@ use crate::transform;
 pub(crate) const FILE_NAME: &str = "mksite.toml";
 
 /// The configuration for a `mksite` project.
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, Default, serde::Deserialize)]
+#[serde(default)]
 pub(crate) struct Config {
     /// The list of important directories.
     ///
@@ -19,9 +20,11 @@ pub(crate) struct Config {
     #[serde(default)]
     pub(crate) dirs: Dirs,
     /// Data to be passed to template rendering.
+    #[serde(default)]
     pub(crate) data: HashMap<String, toml::Value>,
     /// The list of transforms to apply, stored as a map of input formats to
     /// sub-maps of output formats and transforms.
+    #[serde(default)]
     pub(crate) transforms: HashMap<String, HashMap<String, transform::Transform>>,
 }
 
@@ -30,13 +33,39 @@ pub(crate) struct Config {
 pub(crate) struct Dirs {
     /// The src directory holds template files to be rendered, transformed, and
     /// inserted into layouts.
+    #[serde(default = "Dirs::default_src")]
     pub(crate) src: String,
     /// The out directory is where generated content goes.
+    #[serde(default = "Dirs::default_out")]
     pub(crate) out: String,
     /// Files in the static directory are copied as-is to the out directory.
+    #[serde(default = "Dirs::default_static")]
     pub(crate) r#static: String,
     /// The layout directory is where layout files are stored.
+    #[serde(default = "Dirs::default_layout")]
     pub(crate) layout: String,
+}
+
+impl Dirs {
+    /// Returns the default 'src/' directory.
+    fn default_src() -> String {
+        "src".to_owned()
+    }
+
+    /// Returns the default 'out/' directory.
+    fn default_out() -> String {
+        "out".to_owned()
+    }
+
+    /// Returns the default 'static/' directory.
+    fn default_static() -> String {
+        "static".to_owned()
+    }
+
+    /// Returns the default 'layout/' directory.
+    fn default_layout() -> String {
+        "layout".to_owned()
+    }
 }
 
 impl Default for Dirs {
