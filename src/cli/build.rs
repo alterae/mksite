@@ -16,7 +16,7 @@ pub(crate) fn cmd() -> anyhow::Result<()> {
         config::FILE_NAME
     );
 
-    log::debug!("Loading config...");
+    log::debug!("Loading config");
     let config = config::load()?;
     let mut context = tera::Context::new();
     context.insert("data", &config.data);
