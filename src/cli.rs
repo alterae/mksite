@@ -12,12 +12,14 @@ pub(crate) struct Args {
     /// The subcommand to run.
     #[command(subcommand)]
     pub command: Command,
+
     /// Do not print log messages.
-    #[arg(short, long)]
+    #[arg(short, long, conflicts_with = "log_level")]
     pub quiet: bool,
-    /// Use verbose output (-v, -vv, -vvv etc.).
-    #[arg(short, long, action=clap::ArgAction::Count)]
-    pub verbose: u8,
+
+    /// What level of logging to enable (error, warn, info, debug, or trace).
+    #[arg(long, default_value = "info")]
+    pub log_level: log::LevelFilter,
 }
 
 #[derive(clap::Subcommand)]
