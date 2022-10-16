@@ -10,7 +10,7 @@ use crate::transform;
 pub(crate) const FILE_NAME: &str = "mksite.toml";
 
 /// The configuration for a `mksite` project.
-#[derive(Debug, Default, serde::Deserialize)]
+#[derive(Debug, Default, serde::Deserialize, serde::Serialize)]
 #[serde(default)]
 pub(crate) struct Config {
     /// The list of important directories.
@@ -31,7 +31,7 @@ pub(crate) struct Config {
 }
 
 /// The names of all the important directories needed to build a site.
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub(crate) struct Dirs {
     /// The src directory holds template files to be rendered, transformed, and
     /// inserted into layouts.

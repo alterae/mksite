@@ -10,7 +10,7 @@ use crate::{Error, Result};
 /// A transform is a command or pipeline of command for transforming content.
 /// Transforms take an input string on standard input and return an output
 /// string on standard output.
-#[derive(Debug, PartialEq, serde::Deserialize)]
+#[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize)]
 #[serde(untagged)]
 pub(crate) enum Transform {
     /// A transform with only one command.
@@ -21,7 +21,7 @@ pub(crate) enum Transform {
     /// md.html = "pandoc -f markdown -t html"
     /// ```
     Single(String),
-    
+
     /// A transforms with multipe commands. The output of each command is piped
     /// as the input to the next.
     ///
