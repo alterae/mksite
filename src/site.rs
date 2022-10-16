@@ -71,6 +71,7 @@ impl Site {
                         } else {
                             output
                         };
+
                         log::info!("Writing '{}'", path.display());
                         fs::write(path, output).map_err(|source| Error::Io {
                             msg: format!("Cannot write '{}'", path.display()),
@@ -150,22 +151,28 @@ impl Site {
             }
         );
 
+        // Try to find a default layout.
         let layout = if path.exists() {
             Some(stripped.to_owned())
         } else {
+            // Walk up the file tree until we find a matching default layout
+            // or run out of parents.
             let mut res = None;
             for ancestor in path.ancestors() {
                 let path = ancestor.join(&wildcard);
                 res = if path.exists() {
-                    Some(
-                        path.strip_prefix(&self.config.dirs.layout)
-                            .map_err(|source| Error::StripPath {
-                                path: path.clone(),
-                                prefix: self.config.dirs.layout.clone(),
-                                source,
-                            })?
-                            .to_owned(),
-                    )
+                    // The layout path is the path to the layout _file_ with the
+                    // name of the layout directory removed, so that we can pass
+                    // the path to Tera
+                    let layout = path
+                        .strip_prefix(&self.config.dirs.layout)
+                        .map_err(|source| Error::StripPath {
+                            path: path.clone(),
+                            prefix: self.config.dirs.layout.clone(),
+                            source,
+                        })?
+                        .to_owned();
+                    Some(layout)
                 } else {
                     None
                 };
@@ -193,9 +200,11 @@ impl Site {
                 })?,
             );
 
-            Ok(layouts
-                .render(layout.to_str().unwrap(), &context)?
-                .into_bytes())
+            let layout = layout
+                .to_str()
+                .ok_or_else(|| Error::PathConversion(layout.clone()))?;
+
+            Ok(layouts.render(layout, &context)?.into_bytes())
         } else {
             Ok(body.to_owned())
         }

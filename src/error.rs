@@ -65,6 +65,13 @@ pub(crate) enum Error {
     /// [fs_extra::error::Error].
     #[error("Cannot copy static directory contents: {0}")]
     FsExtra(#[from] fs_extra::error::Error),
+
+    // debug instead of display bc escaping the things is actually useful here
+    /// An path was invalid UTF-8. This is distinct from [Error::FromUtf8] in
+    /// that it occurs when converting a _path_ to UTF-8, while [Error::FromUtf8]
+    /// is for errors converting byte vecs.
+    #[error("Invalid UTF-8 in path {0:?}")]
+    PathConversion(path::PathBuf),
 }
 
 /// Custom result wrapper that represents either success or failure.

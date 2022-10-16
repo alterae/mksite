@@ -64,18 +64,17 @@ pub(crate) fn exec(input: Vec<u8>, command: &String) -> Result<Vec<u8>> {
 
     proc.stdin
         .take()
-        .unwrap()
+        .expect("Child process stdin was None, which should be impossible")
         .write_all(&input)
         .map_err(|source| Error::Io {
             msg: format!("Cannot pipe to `{command}'"),
             source,
         })?;
 
-    Ok(proc
-        .wait_with_output()
-        .map_err(|source| Error::Io {
-            msg: format!("Error while waiting on `{command}'"),
-            source,
-        })?
-        .stdout)
+    let output = proc.wait_with_output().map_err(|source| Error::Io {
+        msg: format!("Error while waiting on `{command}'"),
+        source,
+    })?;
+
+    Ok(output.stdout)
 }

@@ -21,7 +21,10 @@ fn main() {
 
 /// Initializes the global logger via `fern` to the specified verbosity level.
 /// If `quiet` is true, no output will be printed.
-fn setup_logger(level: log::LevelFilter, quiet: bool) -> Result<()> {
+fn setup_logger(
+    level: log::LevelFilter,
+    quiet: bool,
+) -> std::result::Result<(), log::SetLoggerError> {
     use colored::{Color, Colorize};
 
     fern::Dispatch::new()
@@ -46,6 +49,5 @@ fn setup_logger(level: log::LevelFilter, quiet: bool) -> Result<()> {
         })
         .level(if quiet { log::LevelFilter::Off } else { level })
         .chain(std::io::stderr())
-        .apply()?;
-    Ok(())
+        .apply()
 }
