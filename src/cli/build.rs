@@ -45,22 +45,22 @@ pub(crate) fn cmd() -> Result<()> {
                 for (ext, transform) in &config.transforms[ext] {
                     let path = &path.with_extension(ext);
 
-                    log::debug!("Transforming {path:?}");
+                    log::debug!("Transforming '{}'", path.display());
                     let output = transform.apply(output.as_bytes())?;
 
                     let output = apply_layout(path, &output)?;
-                    log::info!("Writing {path:?}");
+                    log::info!("Writing '{}'", path.display());
                     fs::write(path, output).map_err(|source| Error::Io {
-                        msg: format!("Cannot write {path:?}"),
+                        msg: format!("Cannot write '{}'", path.display()),
                         source,
                     })?;
                 }
             }
             _ => {
                 let output = apply_layout(&path, output.as_bytes())?;
-                log::info!("Writing {path:?}");
+                log::info!("Writing '{}'", path.display());
                 fs::write(&path, output).map_err(|source| Error::Io {
-                    msg: format!("Cannot write {path:?}"),
+                    msg: format!("Cannot write '{}'", path.display()),
                     source,
                 })?;
             }
@@ -146,13 +146,17 @@ pub(crate) fn apply_layout(path: &Path, body: &[u8]) -> Result<Vec<u8>> {
     };
 
     if let Some(layout) = layout {
-        log::info!("Applying layout {layout:?}");
+        log::info!("Applying layout '{}'", layout.display());
         let mut context = tera::Context::new();
         context.insert("data", &config.data);
         context.insert(
             "content",
             &String::from_utf8(body.to_owned()).map_err(|source| Error::FromUtf8 {
-                msg: format!("Cannot apply layout {layout:?} to {path:?}"),
+                msg: format!(
+                    "Cannot apply layout '{}' to '{}'",
+                    layout.display(),
+                    path.display()
+                ),
                 source,
             })?,
         );

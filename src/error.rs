@@ -39,7 +39,7 @@ pub(crate) enum Error {
     },
 
     /// Attempting to strip the prefix from a file path failed.
-    #[error("Cannot strip prefix \"{prefix}\" from {path}: {source}")]
+    #[error("Cannot strip prefix '{prefix}' from '{path}': {source}")]
     StripPath {
         /// The path that could not be stripped.
         path: path::PathBuf,

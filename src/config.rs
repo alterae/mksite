@@ -109,7 +109,7 @@ pub(crate) fn generate(path: &path::Path) -> Result<()> {
         Ok(file) => file,
         Err(source) => {
             return Err(Error::Io {
-                msg: format!("Cannot create {path:?}"),
+                msg: format!("Cannot create '{}'", path.display()),
                 source,
             })
         }
@@ -117,7 +117,7 @@ pub(crate) fn generate(path: &path::Path) -> Result<()> {
 
     file.write_all(include_str!("../mksite.default.toml").as_bytes())
         .map_err(|source| Error::Io {
-            msg: format!("Cannot write {path:?}"),
+            msg: format!("Cannot write '{}'", path.display()),
             source,
         })
 }
