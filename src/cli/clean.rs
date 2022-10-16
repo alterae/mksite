@@ -8,7 +8,7 @@ use crate::{config, Result};
 pub(crate) fn cmd() -> Result<()> {
     let config = config::load()?;
 
-    log::info!("Removing \"{}\"", config.dirs.out);
+    log::info!("Removing '{}/'", config.dirs.out);
 
     fs::remove_dir_all(&config.dirs.out).or_else(|e| match e.kind() {
         io::ErrorKind::NotFound => {
