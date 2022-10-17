@@ -84,7 +84,7 @@ An example layout file looks like this.
   <head></head>
   <body>
     <!-- The "| safe" prevents Tera from html-escaping the content. -->
-    {{ content | safe }}
+    {{ page.content | safe }}
   </body>
 </html>
 ```
@@ -116,7 +116,7 @@ If an applicable layout exists, but you would like to prevent it from being appl
 {% raw %}
 
 ```
-{{ content | safe }}
+{{ page.content | safe }}
 ```
 
 {% endraw %}

@@ -14,13 +14,13 @@ pub(crate) enum Error {
         source: io::Error,
     },
 
+    // FIXME: improve error message
     /// Tera templating failed. Wraps [tera::Error].
     #[error(transparent)]
     Tera(#[from] tera::Error),
 
     /// Deserializing TOML failed. Wraps [toml::de::Error].
-    // FIXME: hardcoded filename
-    #[error("Cannot deserialize mksite.toml: {0}")]
+    #[error("Cannot deserialize {}: {0}", crate::config::FILE_NAME)]
     Toml(#[from] toml::de::Error),
 
     /// Initializing the logger failed because [log::set_logger] has already
@@ -45,7 +45,7 @@ pub(crate) enum Error {
         path: path::PathBuf,
 
         /// The prefix that could not be stripped from the path.
-        prefix: String,
+        prefix: path::PathBuf,
 
         /// The wrapped error that caused this error.
         source: path::StripPrefixError,

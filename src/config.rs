@@ -1,6 +1,11 @@
 //! Config file generation, parsing, and loading.
 
-use std::{collections::HashMap, fs, io::Write, path};
+use std::{
+    collections::HashMap,
+    fs,
+    io::Write,
+    path::{self, PathBuf},
+};
 
 use crate::{Error, Result};
 
@@ -10,15 +15,17 @@ use crate::transform;
 pub(crate) const FILE_NAME: &str = "mksite.toml";
 
 /// The configuration for a `mksite` project.
-#[derive(Debug, Default, serde::Deserialize, serde::Serialize)]
+#[derive(Clone, Debug, Default, serde::Deserialize, serde::Serialize)]
 #[serde(default)]
 pub(crate) struct Config {
     /// The list of important directories.
-    ///
-    /// FIXME: The whole key can be omitted, but if any of them are specified
-    /// manually, all of them have to be.
     #[serde(default)]
     pub(crate) dirs: Dirs,
+
+    /// The list of pages to ignore in the templating, transforming, and layout
+    /// steps.
+    #[serde(default)]
+    pub(crate) ignores: Ignores,
 
     /// Data to be passed to template rendering.
     #[serde(default)]
@@ -31,45 +38,72 @@ pub(crate) struct Config {
 }
 
 /// The names of all the important directories needed to build a site.
-#[derive(Debug, serde::Deserialize, serde::Serialize)]
+#[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
 pub(crate) struct Dirs {
     /// The src directory holds template files to be rendered, transformed, and
     /// inserted into layouts.
     #[serde(default = "Dirs::default_src")]
-    pub(crate) src: String,
+    pub(crate) src: PathBuf,
 
     /// The out directory is where generated content goes.
     #[serde(default = "Dirs::default_out")]
-    pub(crate) out: String,
+    pub(crate) out: PathBuf,
 
     /// Files in the static directory are copied as-is to the out directory.
     #[serde(default = "Dirs::default_static")]
-    pub(crate) r#static: String,
+    pub(crate) r#static: PathBuf,
 
     /// The layout directory is where layout files are stored.
     #[serde(default = "Dirs::default_layout")]
-    pub(crate) layout: String,
+    pub(crate) layout: PathBuf,
+}
+
+// TODO: use git-style globs for ignore paths
+// TODO: document in readme
+/// The paths to files to be ignored during the templating, transform, and
+/// layout steps.
+#[derive(Clone, Debug, Default, serde::Deserialize, serde::Serialize)]
+pub(crate) struct Ignores {
+    /// Paths to source pages (eg `src/index.html`) to be ignored turing
+    /// templating. Pages ignored this way will not be passed through Tera, and
+    /// as such do not have to be valid UTF-8.
+    #[serde(default)]
+    pub(crate) template: Vec<PathBuf>,
+
+    /// Paths to source pages (eg `src/index.html`) to be ignored during the
+    /// transform step. Pages ignored this way will not be transformed, and
+    /// their file extension will remain preserved, as if no transform were
+    /// defined for them.
+    #[serde(default)]
+    pub(crate) transform: Vec<PathBuf>,
+
+    /// Paths to _output_ pages (eg `out/index.html`) to be ignored during the
+    /// layout step. Pages ignored this way will not have layouts applied to
+    /// them, and will be written to the output directory as-is, as if no layout
+    /// were defined from them. As a result, they do not have to be valid UTF-8.
+    #[serde(default)]
+    pub(crate) layout: Vec<PathBuf>,
 }
 
 impl Dirs {
     /// Returns the default 'src/' directory.
-    fn default_src() -> String {
-        "src".to_owned()
+    fn default_src() -> PathBuf {
+        "src".into()
     }
 
     /// Returns the default 'out/' directory.
-    fn default_out() -> String {
-        "out".to_owned()
+    fn default_out() -> PathBuf {
+        "out".into()
     }
 
     /// Returns the default 'static/' directory.
-    fn default_static() -> String {
-        "static".to_owned()
+    fn default_static() -> PathBuf {
+        "static".into()
     }
 
     /// Returns the default 'layout/' directory.
-    fn default_layout() -> String {
-        "layout".to_owned()
+    fn default_layout() -> PathBuf {
+        "layout".into()
     }
 }
 

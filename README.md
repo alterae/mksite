@@ -72,7 +72,7 @@ All fields in this config file are optional.
 
 ### Layouts
 
-Layouts are simply Tera templates located in the `layout/` directory that accept an additional `content` variable. Layouts must be valid UTF-8, but aside from that they can be any format.
+Layouts are simply Tera templates located in the `layout/` directory that accept an additional `page.content` variable. Layouts must be valid UTF-8, but aside from that they can be any format.
 
 An example layout file looks like this.
 
@@ -83,7 +83,7 @@ An example layout file looks like this.
   <head></head>
   <body>
     <!-- The "| safe" prevents Tera from html-escaping the content. -->
-    {{ content | safe }}
+    {{ page.content | safe }}
   </body>
 </html>
 ```
@@ -112,7 +112,7 @@ If no applicable layouts are found for a file, or if there is no `layout/` no la
 If an applicable layout exists, but you would like to prevent it from being applied to a file or folder, you can define an "empty" layout like so:
 
 ```
-{{ content | safe }}
+{{ page.content | safe }}
 ```
 
 ### Transforms

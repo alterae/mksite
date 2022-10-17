@@ -10,7 +10,7 @@ use crate::{Error, Result};
 /// A transform is a command or pipeline of command for transforming content.
 /// Transforms take an input string on standard input and return an output
 /// string on standard output.
-#[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize)]
 #[serde(untagged)]
 pub(crate) enum Transform {
     /// A transform with only one command.
@@ -43,14 +43,27 @@ impl Transform {
     }
 }
 
+impl std::fmt::Display for Transform {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "`{}'",
+            match self {
+                Transform::Single(cmd) => cmd.clone(),
+                Transform::Chain(cmds) => cmds.join(" | "),
+            }
+        )
+    }
+}
+
 /// Tries to run a shell command with the given input, and returns the output.
 pub(crate) fn exec(input: Vec<u8>, command: &String) -> Result<Vec<u8>> {
-    log::info!("Applying `{command}'");
-
     let argv = shell_words::split(command).map_err(|source| Error::Shell {
         command: command.clone(),
         source,
     })?;
+
+    log::debug!("Runnging {argv:?}");
 
     let mut proc = Command::new(&argv[0])
         .args(&argv[1..])
