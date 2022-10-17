@@ -17,7 +17,6 @@ exclude = ["/docs", "/.github", "/Makefile"]
 clap = { version = "4.0.14", features = ["derive"] }
 colored = "2.0.0"
 fern = "0.6.1"
-fs_extra = "1.2.0"
 log = "0.4.17"
 maplit = "1.0.2"
 serde = { version = "1.0.145", features = ["derive"] }

@@ -61,11 +61,6 @@ pub(crate) enum Error {
         source: std::string::FromUtf8Error,
     },
 
-    /// An error occured while performing some operation via [fs_extra]. Wraps
-    /// [fs_extra::error::Error].
-    #[error("Cannot copy static directory contents: {0}")]
-    FsExtra(#[from] fs_extra::error::Error),
-
     // debug instead of display bc escaping the things is actually useful here
     /// An path was invalid UTF-8. This is distinct from [Error::FromUtf8] in
     /// that it occurs when converting a _path_ to UTF-8, while [Error::FromUtf8]
