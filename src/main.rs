@@ -1,6 +1,8 @@
 //! Binary crate root for `mksite`.
 #![warn(clippy::missing_docs_in_private_items)]
 
+use std::process::exit;
+
 use clap::Parser;
 
 mod cli;
@@ -17,7 +19,10 @@ fn main() {
 
     setup_logger(args.log_level, args.quiet).unwrap_or_else(|e| log::error!("{e}"));
 
-    args.command.run().unwrap_or_else(|e| log::error!("{e}"))
+    args.command.run().unwrap_or_else(|e| {
+        log::error!("{e}");
+        exit(1)
+    });
 }
 
 /// Initializes the global logger via `fern` to the specified verbosity level.
