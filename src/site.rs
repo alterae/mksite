@@ -44,12 +44,13 @@ impl Site {
     }
 
     /// Builds templates, renders them, applies transforms and layouts, and
-    /// writes the results to the configured output directory.
+    /// copies the results to the configured output directory.
     pub fn build(mut self) -> Result<()> {
         self.build_templates()?;
-        self.map_pages()?;
+        let rendered_pages = self.render_pages()?;
+        self.prepare_mappings(rendered_pages)?;
         self.apply_transforms()?;
-        self.write_output()?;
+        self.apply_layouts_and_write_output()?;
         self.copy_statics()
     }
 
@@ -84,17 +85,27 @@ impl Site {
         Ok(())
     }
 
-    /// Produces the final set of [Page]s in preparation for transforms and layouts.
-    fn map_pages(&mut self) -> Result<()> {
+    /// Renders tera templates to produce [Page]s in preparation for transforms and layouts.
+    fn render_pages(&mut self) -> Result<Vec<(PathBuf, Vec<u8>)>> {
         let mut context = tera::Context::new();
         context.insert("data", &self.config.data);
 
         // render page contents
-        let rendered = self.render_page_templates(context)?;
+        self.render_page_templates(context)
+    }
 
-        for (source, content) in rendered {
+    /// Prepares the mappings required for each [Page] based on transform configurations.
+    fn prepare_mappings(&mut self, rendered_pages: Vec<(PathBuf, Vec<u8>)>) -> Result<()> {
+        for (source, content) in rendered_pages {
             let mut destination =
                 util::swap_prefix(&source, &self.config.dirs.src, &self.config.dirs.out)?;
+
+            if self.config.ignores.transform.contains(&destination) {
+                log::info!(
+                    "Skipping transform step for '{}' as it is in the transform ignore list",
+                    destination.display()
+                );
+            }
 
             match source.extension().and_then(OsStr::to_str) {
                 Some(ext)
@@ -192,8 +203,8 @@ impl Site {
         Ok(res)
     }
 
-    /// Apply transforms and layouts and write the generated files.
-    fn write_output(&self) -> Result<()> {
+    /// Apply layouts and write the generated files.
+    fn apply_layouts_and_write_output(&self) -> Result<()> {
         for mapping in &self.mappings {
             let layout = self.find_layout(mapping)?;
 
@@ -330,13 +341,6 @@ impl Site {
     /// Applies the transforms for every mapping, mutating them.
     fn apply_transforms(&mut self) -> Result<()> {
         for mapping in &mut self.mappings {
-            if self.config.ignores.transform.contains(&mapping.destination) {
-                log::info!(
-                    "Skipping transform step for '{}' as it is in the transform ignore list",
-                    mapping.destination.display()
-                );
-            }
-
             mapping.transform()?;
         }
 
