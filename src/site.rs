@@ -224,14 +224,21 @@ impl Site {
                         "NOTE: Context field `page.content` is omitted from debug output\nUsing layout rendering {context:#?}"
                     );
 
-                    context.insert("page", &maplit::hashmap! {"content" => String::from_utf8(mapping.content.clone()).map_err(|source| Error::FromUtf8 {
-                        msg: format!(
-                            "Cannot apply layout '{}' to '{}'",
-                            layout.display(),
-                            mapping.destination.display()
-                        ),
-                        source,
-                    })?});
+                    context.insert(
+                        "page",
+                        &maplit::hashmap! {
+                        "content" => String::from_utf8(mapping.content.clone())
+                            .map_err(|source| Error::FromUtf8 {
+                                msg: format!(
+                                    "Cannot apply layout '{}' to '{}'",
+                                    layout.display(),
+                                    mapping.destination.display()
+                                ),
+                                source,
+                            })?,
+                        // FIXME: replace this unwrap with better code
+                        "source-path" => mapping.source.to_str().unwrap().to_owned()},
+                    );
 
                     let layout_name = layout
                         .to_str()
