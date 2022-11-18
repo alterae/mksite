@@ -42,18 +42,26 @@ pub(crate) struct Config {
 pub(crate) struct Dirs {
     /// The src directory holds template files to be rendered, transformed, and
     /// inserted into layouts.
+    ///
+    /// The `serde` default is provided by the function [`Dirs::default_src`](Dirs::default_src).
     #[serde(default = "Dirs::default_src")]
     pub(crate) src: PathBuf,
 
     /// The out directory is where generated content goes.
+    ///
+    /// The `serde` default is provided by the function [`Dirs::default_src`](Dirs::default_out).
     #[serde(default = "Dirs::default_out")]
     pub(crate) out: PathBuf,
 
     /// Files in the static directory are copied as-is to the out directory.
+    ///
+    /// The `serde` default is provided by the function [`Dirs::default_src`](Dirs::default_static).
     #[serde(default = "Dirs::default_static")]
     pub(crate) r#static: PathBuf,
 
     /// The layout directory is where layout files are stored.
+    ///
+    /// The `serde` default is provided by the function [`Dirs::default_src`](Dirs::default_layout).
     #[serde(default = "Dirs::default_layout")]
     pub(crate) layout: PathBuf,
 }
@@ -64,7 +72,7 @@ pub(crate) struct Dirs {
 /// layout steps.
 #[derive(Clone, Debug, Default, serde::Deserialize, serde::Serialize)]
 pub(crate) struct Ignores {
-    /// Paths to source pages (eg `src/index.html`) to be ignored turing
+    /// Paths to source pages (eg `src/index.html`) to be ignored during
     /// templating. Pages ignored this way will not be passed through Tera, and
     /// as such do not have to be valid UTF-8.
     #[serde(default)]
