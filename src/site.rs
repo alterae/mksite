@@ -111,7 +111,7 @@ impl Site {
                     log::debug!("Transforms apply to source '{}'", source.display());
 
                     for (target_ext, transform) in &self.config.transforms[ext] {
-                        destination.set_extension(&target_ext);
+                        destination.set_extension(target_ext);
 
                         log::debug!(
                             "Mapping '{}' -> '{}' via {transform}",
