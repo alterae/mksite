@@ -1,10 +1,6 @@
 //! Types and methods for modeling and building the website.
 
-use std::{
-    ffi::OsStr,
-    fs::{self},
-    path::PathBuf,
-};
+use std::{ffi::OsStr, fs, path::PathBuf};
 
 use crate::{config, transform, util, Error, Result};
 
