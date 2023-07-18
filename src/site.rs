@@ -237,7 +237,7 @@ impl Site {
                                 source,
                             })?,
                         // FIXME: replace this unwrap with better code
-                        "source-path" => mapping.source.to_str().unwrap().to_owned()},
+                        "source_path" => mapping.source.to_str().unwrap().to_owned()},
                     );
 
                     let layout_name = layout
