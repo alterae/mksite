@@ -14,13 +14,13 @@ exclude = ["/docs", "/.github", "/Makefile"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.0.14", features = ["derive"] }
-colored = "2.0.0"
-fern = "0.6.1"
-log = "0.4.17"
+clap = { version = "4.5.18", features = ["derive"] }
+colored = "2.1.0"
+fern = "0.6.2"
+log = "0.4.22"
 maplit = "1.0.2"
-serde = { version = "1.0.145", features = ["derive"] }
+serde = { version = "1.0.210", features = ["derive"] }
 shell-words = "1.1.0"
-tera = "1.17.1"
-thiserror = "1.0.37"
-toml = "0.5.9"
+tera = "1.20.0"
+thiserror = "1.0.63"
+toml = "0.8.19"
