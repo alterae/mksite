@@ -4,10 +4,10 @@ use std::{io, path};
 /// Custom error type for all the errors that our code can generate.
 #[derive(Debug, thiserror::Error)]
 pub(crate) enum Error {
-    /// An I/O error occured.
+    /// An I/O error occurred.
     #[error("{msg}: {source}")]
     Io {
-        /// A message detailing what context the error occured in.
+        /// A message detailing what context the error occurred in.
         msg: String,
 
         /// The wrapped error that caused this error.
@@ -62,7 +62,7 @@ pub(crate) enum Error {
     },
 
     // debug instead of display bc escaping the things is actually useful here
-    /// An path was invalid UTF-8. This is distinct from [Error::FromUtf8] in
+    /// A path was invalid UTF-8. This is distinct from [Error::FromUtf8] in
     /// that it occurs when converting a _path_ to UTF-8, while [Error::FromUtf8]
     /// is for errors converting byte vecs.
     #[error("Invalid UTF-8 in path {0:?}")]

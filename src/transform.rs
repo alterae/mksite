@@ -22,7 +22,7 @@ pub(crate) enum Transform {
     /// ```
     Single(String),
 
-    /// A transforms with multipe commands. The output of each command is piped
+    /// A transforms with multiple commands. The output of each command is piped
     /// as the input to the next.
     ///
     /// ## Example
@@ -63,7 +63,7 @@ pub(crate) fn exec(input: Vec<u8>, command: &String) -> Result<Vec<u8>> {
         source,
     })?;
 
-    log::debug!("Runnging {argv:?}");
+    log::debug!("Running {argv:?}");
 
     let mut proc = Command::new(&argv[0])
         .args(&argv[1..])
